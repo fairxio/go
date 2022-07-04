@@ -2,6 +2,10 @@ package main
 
 func main() {}
 
-func PerformExecutableWorkflow() {
+//export pew
+func performExecutableWorkflow() {
+
+	// log.Info("Hey there!")
+	println("Hey there!")
 
 }
