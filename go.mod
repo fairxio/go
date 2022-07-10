@@ -2,15 +2,12 @@ module github.com/fairxio/go
 
 go 1.18
 
+
 require (
-	github.com/dop251/goja v0.0.0-20220516123900-4418d4575a41
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.19.0
 	github.com/rs/zerolog v1.27.0
 	github.com/spf13/cobra v1.5.0
-)
-
-require (
 	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
