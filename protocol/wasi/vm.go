@@ -2,6 +2,7 @@ package wasi
 
 import (
 	"fmt"
+	"github.com/fairxio/go/log"
 	v8 "rogchap.com/v8go"
 )
 
@@ -30,8 +31,12 @@ func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 	vm.GlobalObjectTemplate = v8.NewObjectTemplate(vm.Runtime)
 	vm.SessionScript = sessionScriptBytes
 
+	// FairX Protocol Functions
+	callParticipantFunction := v8.NewFunctionTemplate(vm.Runtime, vm.FairXProtocolFunction_CallParticipant)
+
 	fairXObject := v8.NewObjectTemplate(vm.Runtime)
 	fairXObject.Set("version", "v1.0.0")
+	fairXObject.Set("callParticipant", callParticipantFunction)
 	vm.GlobalObjectTemplate.Set("fairx", fairXObject)
 
 	vm.LocalDataStorage = make(map[string]string)
@@ -70,6 +75,14 @@ func (vm *VirtualMachine) ExecuteFunction(functionName string) error {
 	_ = retString
 	_ = val
 	return nil
+}
+
+func (vm *VirtualMachine) FairXProtocolFunction_CallParticipant(info *v8.FunctionCallbackInfo) *v8.Value {
+
+	info.Context().Isolate().TerminateExecution()
+	log.Info("CallParticipant called!")
+	return nil
+
 }
 
 // !!! WASM and Golang are just not ready yet.  Yet.
