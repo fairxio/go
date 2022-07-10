@@ -10,6 +10,7 @@ type FeatureInterface struct {
 	Actions     ActionsFeatures     `json:"actions,omitempty"`
 	Permissions PermissionsFeatures `json:"permissions,omitempty"`
 	Messaging   MessagingFeatures   `json:"messaging,omitempty"`
+	FairX       FairXFeatures       `json:"fairx,omitempty"`
 }
 
 type CollectionsFeatures struct {
@@ -37,6 +38,11 @@ type MessagingFeatures struct {
 	Batching bool `json:"batching"`
 }
 
+type FairXFeatures struct {
+	SessionsEstablish       bool `json:"SessionsEstablish"`
+	SessionsExecuteFunction bool `json:"SessionsExecuteFunction"`
+}
+
 var CurrentFeatureDetection FeatureDetection = FeatureDetection{
 	Type: "FeatureDetection",
 	Interfaces: FeatureInterface{
@@ -60,6 +66,10 @@ var CurrentFeatureDetection FeatureDetection = FeatureDetection{
 		},
 		Messaging: MessagingFeatures{
 			Batching: true,
+		},
+		FairX: FairXFeatures{
+			SessionsEstablish:       true,
+			SessionsExecuteFunction: true,
 		},
 	},
 }
