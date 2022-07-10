@@ -17,3 +17,6 @@
 # IntelliJ Crap
 .idea
 
+# Mac Shit
+.DS_Store
+

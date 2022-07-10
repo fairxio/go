@@ -1,24 +1,25 @@
 package cmd
 
 import (
-	"fmt"
+	"github.com/fairxio/go/applications/fairx/service/dwn"
+	"github.com/fairxio/go/log"
 
 	"github.com/spf13/cobra"
 )
 
-// dwnCmd represents the vm command
-var vmCmd = &cobra.Command{
-	Use:   "vm",
-	Short: "FairX Protocol Virtual Machine",
-	Long:  `The FairX Protocol Virtual Machine executes FairX-protocol compatible WASI packages within a FairX-protocol compliant environment`,
+// dwnCmd represents the dwn command
+var dwnCmd = &cobra.Command{
+	Use:   "dwn",
+	Short: "FairX Decentralized Web Node",
+	Long:  `The FairX Decentralized Web Node implements the identity.foundations spec`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// For now exit.
-		fmt.Println("vm called")
+		log.Info("Starting FairX Decentralized Web Node...")
+		dwn.Start()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(vmCmd)
+	rootCmd.AddCommand(dwnCmd)
 
 	// Here you will define your flags and configuration settings.
 

@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
 	Long: `FairX is a protocol which utilizes the brilliant ideas behind TBD's Self-Sovereign Service and associated projects.
            This is still experimental and I'm not sure where this is going yet.
            -Michael
-'`,
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
