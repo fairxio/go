@@ -1,8 +1,8 @@
 package wasi
 
 import (
-	"github.com/dop251/goja"
-	"github.com/fairxio/go/log"
+	"fmt"
+	v8 "rogchap.com/v8go"
 )
 
 // ************
@@ -14,24 +14,28 @@ type VirtualMachine struct {
 	SessionScript []byte
 
 	// The JS Runtime
-	Runtime *goja.Runtime
+	Runtime *v8.Isolate
+
+	// Global Object Template - where FairX Funtions will live
+	GlobalObjectTemplate *v8.ObjectTemplate
 
 	// Stores the working local data storage for the running session
-	LocalDataStorage map[string]interface{}
+	LocalDataStorage map[string]string
 }
 
 func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 
-	vm := VirtualMachine{SessionScript: sessionScriptBytes}
-	vm.Runtime = goja.New()
+	vm := VirtualMachine{}
+	vm.Runtime = v8.NewIsolate()
+	vm.GlobalObjectTemplate = v8.NewObjectTemplate(vm.Runtime)
+	vm.SessionScript = sessionScriptBytes
 
-	val, err := vm.Runtime.RunString(string(sessionScriptBytes))
-	if err != nil {
-		log.Error("Unable to create JS Runtime and interpret script: %v", err)
-		return nil
-	}
+	fairXObject := v8.NewObjectTemplate(vm.Runtime)
+	fairXObject.Set("version", "v1.0.0")
+	vm.GlobalObjectTemplate.Set("fairx", fairXObject)
 
-	_ = val
+	vm.LocalDataStorage = make(map[string]string)
+	vm.LocalDataStorage["version"] = "v1.0.0"
 
 	return &vm
 
@@ -39,17 +43,33 @@ func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 
 func (vm *VirtualMachine) ExecuteFunction(functionName string) error {
 
-	var execFn func()
-	err := vm.Runtime.ExportTo(vm.Runtime.Get("PerformExecutableWorkflow"), &execFn)
+	runtimeContext := v8.NewContext(vm.Runtime, vm.GlobalObjectTemplate)
+
+	val, err := runtimeContext.RunScript(string(vm.SessionScript), "session.js")
 	if err != nil {
-		log.Fatal("Uh oh!  %v", err)
 		return err
 	}
 
-	execFn()
-	log.Info("Func Execed!")
-	return nil
+	val, err = runtimeContext.RunScript(fmt.Sprintf("%s();", functionName), "session.js")
+	if err != nil {
+		return err
+	}
 
+	fairxObj, err := runtimeContext.Global().Get("fairx")
+	if err != nil {
+		return err
+	}
+
+	ret, err := fairxObj.Object().Get("ret")
+	if err != nil {
+		return err
+	}
+
+	retString := ret.String()
+
+	_ = retString
+	_ = val
+	return nil
 }
 
 // !!! WASM and Golang are just not ready yet.  Yet.
