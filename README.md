@@ -26,7 +26,7 @@ go build
 
 ```shell
 docker pull fairxio/dwn:latest
-docker run -it -v ".:/etc/fairx" -p "8080:8080" fairxio/dwn
+docker run -it -v "$(PWD):/etc/fairx" -p "8080:8080" fairxio/dwn
 ```
 
 **Build Docker Image:**
@@ -34,5 +34,5 @@ docker run -it -v ".:/etc/fairx" -p "8080:8080" fairxio/dwn
 ```shell
 git clone https://github.com/fairxio/go
 cd go
-docker build -f deployment/docker/Dockerfile -t group/dwn .
+docker build -f deployment/docker/Dockerfile -t fairxio/dwn .
 ```
