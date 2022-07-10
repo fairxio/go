@@ -1,25 +1,25 @@
 package cmd
 
 import (
-	"github.com/fairxio/go/applications/fairx/service/dwn"
+	"github.com/fairxio/go/applications/fairx/service/auth"
 	"github.com/fairxio/go/log"
 
 	"github.com/spf13/cobra"
 )
 
-// authCmd represents the dwn command
-var dwnCmd = &cobra.Command{
-	Use:   "dwn",
-	Short: "FairX Decentralized Web Node",
-	Long:  `The FairX Decentralized Web Node implements the identity.foundations spec`,
+// authCmd represents the auth command
+var authCmd = &cobra.Command{
+	Use:   "auth",
+	Short: "FairX Authentication Service",
+	Long:  `The FairX Authentication Service is responsible for authenticating callers to the FairX Node`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Starting FairX Decentralized Web Node...")
-		dwn.Start()
+		log.Info("Starting FairX Authentication Service...")
+		auth.Start()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(dwnCmd)
+	rootCmd.AddCommand(authCmd)
 
 	// Here you will define your flags and configuration settings.
 

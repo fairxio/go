@@ -34,5 +34,37 @@ docker run -it -v "$(PWD):/etc/fairx" -p "8080:8080" fairxio/dwn
 ```shell
 git clone https://github.com/fairxio/go
 cd go
-docker build -f deployment/docker/Dockerfile -t fairxio/dwn .
+docker build -f deployment/docker/Dockerfile-dwn -t fairxio/dwn .
+```
+
+
+## FairX Authentiation Service
+
+**To install, build, and run:**
+
+```shell
+
+git clone https://github.com/fairxio/go
+cd go
+go mod download
+cd go/applications/fairx
+go build
+
+./fairx auth
+
+```
+
+**Use Prebuilt Docker Image:**
+
+```shell
+docker pull fairxio/auth:latest
+docker run -it -v "$(PWD):/etc/fairx" -p "7080:8080" fairxio/auth
+```
+
+**Build Docker Image:**
+
+```shell
+git clone https://github.com/fairxio/go
+cd go
+docker build -f deployment/docker/Dockerfile-auth -t fairxio/auth .
 ```

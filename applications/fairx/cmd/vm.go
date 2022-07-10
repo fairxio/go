@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// dwnCmd represents the vm command
+// authCmd represents the vm command
 var vmCmd = &cobra.Command{
 	Use:   "vm",
 	Short: "FairX Protocol Virtual Machine",
@@ -24,9 +24,9 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// dwnCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// authCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// dwnCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// authCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
