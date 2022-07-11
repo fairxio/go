@@ -1,4 +1,4 @@
-package wasi_test
+package fxi_test
 
 import (
 	"testing"

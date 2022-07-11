@@ -1,4 +1,4 @@
-package wasi
+package fxi
 
 type FairXContext struct {
 }

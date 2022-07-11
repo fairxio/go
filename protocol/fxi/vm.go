@@ -1,12 +1,11 @@
-package wasi
+package fxi
 
 import (
-	"fmt"
 	"github.com/fairxio/go/log"
 	v8 "rogchap.com/v8go"
 )
 
-// ************
+// ************ FairX Interface ***********
 // WE WILL REPLACE THIS WITH A WASI RUNTIME
 // ONCE ONE BECOMES STABLE & AVAILABLE :)
 type VirtualMachine struct {
@@ -19,6 +18,9 @@ type VirtualMachine struct {
 
 	// Global Object Template - where FairX Funtions will live
 	GlobalObjectTemplate *v8.ObjectTemplate
+
+	// The FairX Namespace Object
+	FairXNamespace *v8.ObjectTemplate
 
 	// Stores the working local data storage for the running session
 	LocalDataStorage map[string]string
@@ -34,10 +36,10 @@ func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 	// FairX Protocol Functions
 	callParticipantFunction := v8.NewFunctionTemplate(vm.Runtime, vm.FairXProtocolFunction_CallParticipant)
 
-	fairXObject := v8.NewObjectTemplate(vm.Runtime)
-	fairXObject.Set("version", "v1.0.0")
-	fairXObject.Set("callParticipant", callParticipantFunction)
-	vm.GlobalObjectTemplate.Set("fairx", fairXObject)
+	vm.FairXNamespace = v8.NewObjectTemplate(vm.Runtime)
+	vm.FairXNamespace.Set("version", "v1.0.0")
+	vm.FairXNamespace.Set("callParticipant", callParticipantFunction)
+	vm.GlobalObjectTemplate.Set("fairx", vm.FairXNamespace)
 
 	vm.LocalDataStorage = make(map[string]string)
 	vm.LocalDataStorage["version"] = "v1.0.0"
@@ -55,7 +57,22 @@ func (vm *VirtualMachine) ExecuteFunction(functionName string, args ...interface
 		return err
 	}
 
-	val, err = runtimeContext.RunScript(fmt.Sprintf("%s();", functionName), "session.js")
+	funcValue, err := runtimeContext.Global().Get(functionName)
+	if err != nil {
+		return err
+	}
+	funcImpl, err := funcValue.AsFunction()
+	if err != nil {
+		return err
+	}
+
+	var argsValuer []v8.Valuer
+	for _, v := range args {
+		val, _ := v8.NewValue(vm.Runtime, v)
+		argsValuer = append(argsValuer, val)
+	}
+	_, err = funcImpl.Call(runtimeContext.Global(), argsValuer...)
+	// val, err = runtimeContext.RunScript(fmt.Sprintf("%s();", functionName), "session.js")
 	if err != nil {
 		return err
 	}
@@ -79,23 +96,28 @@ func (vm *VirtualMachine) ExecuteFunction(functionName string, args ...interface
 
 func (vm *VirtualMachine) FairXProtocolFunction_CallParticipant(info *v8.FunctionCallbackInfo) *v8.Value {
 
-	info.Context().Isolate().TerminateExecution()
-	log.Info("CallParticipant called!")
+	log.Info("CallParticipant called:  %v", info.Args())
 	return nil
 
 }
 
-func (vm *VirtualMachine) ProvideFunction(functionName string, funcToProvide interface{}) {
+func (vm *VirtualMachine) ProvideFunction(functionName string, funcToProvide v8.FunctionCallback) error {
 
-	fairxNamespace := vm.Runtime.Get("fairx").ToObject(vm.Runtime)
-	fairxNamespace.Set(functionName, funcToProvide)
+	// Create the function template
+	ft := v8.NewFunctionTemplate(vm.Runtime, funcToProvide)
 
-}
+	// Inject into FairX Namespace and into the global template
+	err := vm.FairXNamespace.Set(functionName, ft)
+	if err != nil {
+		return err
+	}
 
-func (vm *VirtualMachine) CallParticipant(participantIdentifier string, callName string, callArgs ...interface{}) {
-	vm.Runtime.To
-	log.Info("Participant ID:  %v / Call Name:  %v", participantIdentifier, callName)
+	err = vm.GlobalObjectTemplate.Set("fairx", vm.FairXNamespace)
+	if err != nil {
+		return err
+	}
 
+	return nil
 }
 
 // !!! WASM and Golang are just not ready yet.  Yet.
