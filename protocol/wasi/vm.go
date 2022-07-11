@@ -26,16 +26,10 @@ type VirtualMachine struct {
 
 func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 
-<<<<<<< Updated upstream
 	vm := VirtualMachine{}
 	vm.Runtime = v8.NewIsolate()
 	vm.GlobalObjectTemplate = v8.NewObjectTemplate(vm.Runtime)
 	vm.SessionScript = sessionScriptBytes
-=======
-	vm := VirtualMachine{SessionScript: sessionScriptBytes}
-	vm.Runtime = goja.New()
-	vm.Runtime.Set("fairx", vm.Runtime.NewObject())
->>>>>>> Stashed changes
 
 	// FairX Protocol Functions
 	callParticipantFunction := v8.NewFunctionTemplate(vm.Runtime, vm.FairXProtocolFunction_CallParticipant)
@@ -54,7 +48,6 @@ func CreateVirtualMachine(sessionScriptBytes []byte) *VirtualMachine {
 
 func (vm *VirtualMachine) ExecuteFunction(functionName string, args ...interface{}) error {
 
-<<<<<<< Updated upstream
 	runtimeContext := v8.NewContext(vm.Runtime, vm.GlobalObjectTemplate)
 
 	val, err := runtimeContext.RunScript(string(vm.SessionScript), "session.js")
@@ -73,15 +66,10 @@ func (vm *VirtualMachine) ExecuteFunction(functionName string, args ...interface
 	}
 
 	ret, err := fairxObj.Object().Get("ret")
-=======
-	var execFn func(...interface{})
-	err := vm.Runtime.ExportTo(vm.Runtime.Get(functionName), &execFn)
->>>>>>> Stashed changes
 	if err != nil {
 		return err
 	}
 
-<<<<<<< Updated upstream
 	retString := ret.String()
 
 	_ = retString
@@ -93,10 +81,6 @@ func (vm *VirtualMachine) FairXProtocolFunction_CallParticipant(info *v8.Functio
 
 	info.Context().Isolate().TerminateExecution()
 	log.Info("CallParticipant called!")
-=======
-	execFn(args...)
-	log.Info("Func Execed!")
->>>>>>> Stashed changes
 	return nil
 
 }
