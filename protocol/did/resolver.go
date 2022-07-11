@@ -1,9 +1,12 @@
 package did
 
-import "github.com/fairxio/go/did"
+import (
+	"github.com/fairxio/go/comms"
+	"github.com/fairxio/go/did"
+)
 
 type DIDResolver interface {
-	Resolve(did string) did.DIDDocument
+	Resolve(didIdent string) *did.DIDDocument
 }
 
 const (
@@ -16,7 +19,8 @@ func ResolverForMethod(methodName string) DIDResolver {
 	switch methodName {
 
 	case DID_METHOD_FAIRX:
-		return CreateFairXDIDResolver()
+		httpChannel := comms.CreateGoHTTPChannel()
+		return CreateFairXDIDResolver(httpChannel)
 
 	case DID_METHOD_KEY:
 		return CreateKeyDIDResolver()

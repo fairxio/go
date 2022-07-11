@@ -11,7 +11,7 @@ func CreateKeyDIDResolver() *KeyDIDResolver {
 	return &KeyDIDResolver{}
 }
 
-func (r *KeyDIDResolver) Resolve(did string) did.DIDDocument {
+func (r *KeyDIDResolver) Resolve(didIdent string) *did.DIDDocument {
 	//TODO implement me
 	panic("implement me")
 }
