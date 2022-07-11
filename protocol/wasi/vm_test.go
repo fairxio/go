@@ -34,6 +34,13 @@ var _ = Describe("VM", func() {
 
 		})
 
+		It("Provides a function in the VM to the Javascript", func() {
+
+			virtualMachine.ProvideFunction("callParticipant", virtualMachine.CallParticipant)
+			virtualMachine.ExecuteFunction("PerformParticipantCalling", "participantIdentity")
+
+		})
+
 	})
 
 })

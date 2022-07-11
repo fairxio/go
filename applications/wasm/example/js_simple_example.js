@@ -10,3 +10,10 @@ function PerformExecutableWorkflow() {
 
 }
 
+function PerformParticipantCalling(ident) {
+
+    fairx.callParticipant(ident, "SomeFunction", "Nah");
+    var y = "nope";
+
+}
+
