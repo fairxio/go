@@ -6,6 +6,8 @@ Golang Monorepo for the FairX Project, projects and code supporting TBD's Web5 P
 
 # Applications
 
+**Note:  Nearly everything in this repository should be considered "pre-alpha" at this time**
+
 ## Building the `fairx` executable
 
 The `fairx` executable from this monorepo is following the [commander pattern](https://github.com/spf13/viper) for golang apps. 
@@ -55,6 +57,8 @@ make build-docker-dwn
 
 Generally speaking, any authentication service can be plugged in here, however one wants to issue a valid JWT, using a shared key between services requiring authorization.
 This service automatically issues a JWT for any valid DID authentication flow where the DID presented was not on a blacklist, or is on a whitelist.  
+
+This implementation for now is extraordinarily simple, not even verifying a DID to resolution - that will be done in v0.2.  For now, return a JWT.
 
 **To run (after building the `fairx` executable):**
 
