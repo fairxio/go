@@ -6,9 +6,11 @@ Golang Monorepo for the FairX Project, projects and code supporting TBD's Web5 P
 
 # Applications
 
-## Decentralized Web Node
+## Building the `fairx` executable
 
-**To install, build, and run:**
+The `fairx` executable from this monorepo is following the [commander pattern](https://github.com/spf13/viper) for golang apps. 
+
+To build:
 
 ```shell
 
@@ -17,6 +19,17 @@ cd go
 go mod download
 cd go/applications/fairx
 go build
+
+```
+
+## Decentralized Web Node
+
+The Decentralized Web Node attempts is an opinionated implementation of [DIF Decentralized Web Nodes](https://identity.foundation/decentralized-web-node/spec/), an
+interesting approach to decentralized application development.
+
+**To run (after building the `fairx` executable):**
+
+```shell
 
 ./fairx dwn
 
@@ -34,21 +47,18 @@ docker run -it -v "$(PWD):/etc/fairx" -p "8080:8080" fairxio/dwn
 ```shell
 git clone https://github.com/fairxio/go
 cd go
-docker build -f deployment/docker/Dockerfile-dwn -t fairxio/dwn .
+make build-docker-dwn
 ```
 
 
-## FairX Authentiation Service
+## FairX Authentication Service
 
-**To install, build, and run:**
+Generally speaking, any authentication service can be plugged in here, however one wants to issue a valid JWT, using a shared key between services requiring authorization.
+This service automatically issues a JWT for any valid DID authentication flow where the DID presented was not on a blacklist, or is on a whitelist.  
+
+**To run (after building the `fairx` executable):**
 
 ```shell
-
-git clone https://github.com/fairxio/go
-cd go
-go mod download
-cd go/applications/fairx
-go build
 
 ./fairx auth
 
@@ -58,7 +68,7 @@ go build
 
 ```shell
 docker pull fairxio/auth:latest
-docker run -it -v "$(PWD):/etc/fairx" -p "7080:8080" fairxio/auth
+docker run -it -v "$(PWD):/etc/fairx" -p "7080:8080" fairxio/auth:latest
 ```
 
 **Build Docker Image:**
@@ -66,5 +76,33 @@ docker run -it -v "$(PWD):/etc/fairx" -p "7080:8080" fairxio/auth
 ```shell
 git clone https://github.com/fairxio/go
 cd go
-docker build -f deployment/docker/Dockerfile-auth -t fairxio/auth .
+make build-docker-auth
+```
+
+## FairX DID Service
+
+The FairX DID Service is a loose implementation of a [DID Registration and Resolution](https://github.com/decentralized-identity/did-registration/blob/main/spec/spec.md) spec 
+led by the identity.foundation, but using REST over TLS explicitly as the base underlying protocol.
+
+**To run (after building the `fairx` executable):**
+
+```shell
+
+./fairx did
+
+```
+
+**Use Prebuilt Docker Image:**
+
+```shell
+docker pull fairxio/auth:latest
+docker run -it -v "$(PWD):/etc/fairx" -p "6080:8080" fairxio/did:latest
+```
+
+**Build Docker Image:**
+
+```shell
+git clone https://github.com/fairxio/go
+cd go
+make build-docker-did
 ```

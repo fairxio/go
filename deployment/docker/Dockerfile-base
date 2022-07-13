@@ -1,0 +1,11 @@
+FROM golang:latest
+MAINTAINER FairX Protocol Project
+
+RUN mkdir -p /opt/fairx && \
+    mkdir -p /etc/fairx/src
+
+COPY . /opt/fairx/src/
+
+RUN cd /opt/fairx/src && go mod download
+RUN cd /opt/fairx/src/applications/fairx && go build && go install
+RUN rm -Rf /opt/fairx/src
