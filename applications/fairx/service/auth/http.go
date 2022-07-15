@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fairxio/go/applications/fairx/configuration"
 	"github.com/fairxio/go/ext"
+	"github.com/fairxio/go/log"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -83,9 +84,10 @@ func (svc *HTTPService) ServiceHandler(w http.ResponseWriter, r *http.Request) {
 		// TODO:  Verify signature
 		claims := CreateClaims(authReq.ID, "did:fairx:issuerDID")
 
-		token := jwt.NewWithClaims(jwt.SigningMethodEdDSA, claims)
-		signedToken, err := token.SignedString(config.GetJWTKey())
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		signedToken, err := token.SignedString([]byte(config.GetJWTKey()))
 		if err != nil {
+			log.Error("There was an error signing a JWT:  %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
