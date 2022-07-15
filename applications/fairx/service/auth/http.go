@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fairxio/go/applications/fairx/configuration"
+	jwt "github.com/fairxio/go/authentication/jwt"
 	"github.com/fairxio/go/ext"
-	"github.com/fairxio/go/log"
-	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -82,15 +81,8 @@ func (svc *HTTPService) ServiceHandler(w http.ResponseWriter, r *http.Request) {
 
 		// DOnt even bother verifying the signature for now
 		// TODO:  Verify signature
-		claims := CreateClaims(authReq.ID, "did:fairx:issuerDID")
-
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		signedToken, err := token.SignedString([]byte(config.GetJWTKey()))
-		if err != nil {
-			log.Error("There was an error signing a JWT:  %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		token := jwt.GenerateJWT(authReq.ID, "did:fairx:issuerDID")
+		signedToken := jwt.SignJWT(token, config.GetJWTKey())
 
 		authReq.JWT = signedToken
 		resp, _ := json.Marshal(&authReq)
