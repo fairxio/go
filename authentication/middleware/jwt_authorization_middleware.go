@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"fmt"
-	jwt2 "github.com/fairxio/go/authentication/jwt"
+	fairxjwt "github.com/fairxio/go/authentication/jwt"
 	"github.com/golang-jwt/jwt"
 	"net/http"
 )
 
-var secretKey string = ""
+var JWTSecretKey string = ""
 
 //check whether user is authorized or not
 func IsJWTAuthorized(handler http.HandlerFunc) http.HandlerFunc {
@@ -22,8 +22,9 @@ func IsJWTAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Parse out the token
-		jwtString := authHeader[8:] // Bearer:
-		token, _ := jwt.Parse(jwtString, func(token *jwt.Token) (interface{}, error) {
+		jwtString := authHeader[7:] // Bearer:
+		fairxClaims := fairxjwt.Claims{}
+		token, _ := jwt.ParseWithClaims(jwtString, &fairxClaims, func(token *jwt.Token) (interface{}, error) {
 
 			// Verify Algorithm
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -31,11 +32,11 @@ func IsJWTAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 			}
 
 			// Return secret key
-			return []byte(secretKey), nil
+			return []byte(JWTSecretKey), nil
 		})
 
-		if claims, ok := token.Claims.(jwt2.Claims); ok && token.Valid {
-			r.Header.Set("subject", claims.Subject)
+		if token.Valid {
+			r.Header.Set("subject", fairxClaims.Subject)
 			handler.ServeHTTP(w, r)
 			return
 		}

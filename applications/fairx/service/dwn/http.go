@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/fairxio/go/authentication/middleware"
 	"github.com/fairxio/go/did"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -17,14 +18,16 @@ type HTTPService struct {
 	InterfaceRouter *InterfaceRouter
 }
 
-func CreateHTTPService(addr string, port int) *HTTPService {
+func CreateHTTPService(addr string, port int, jwtKey string) *HTTPService {
 
+	// Set JWT Key
+	middleware.JWTSecretKey = jwtKey
 	svc := HTTPService{}
 	svc.Router = mux.NewRouter()
 	svc.InterfaceRouter = CreateInterfaceRouter()
 	svc.ListenAddr = addr
 	svc.ListenPort = port
-	svc.Router.HandleFunc("/v1.0.0", svc.ServiceHandler).Methods(http.MethodPost)
+	svc.Router.HandleFunc("/v1.0.0", middleware.IsJWTAuthorized(svc.ServiceHandler)).Methods(http.MethodPost)
 
 	return &svc
 

@@ -10,7 +10,7 @@ func Start() {
 	// Create Configuration
 	config := configuration.Create()
 
-	httpService := CreateHTTPService(config.GetListenAddress(), config.GetListenPort())
+	httpService := CreateHTTPService(config.GetListenAddress(), config.GetListenPort(), config.GetJWTKey())
 	log.Info("FairX DID Service shutting down:  %v", httpService.ListenAndServe())
 
 }

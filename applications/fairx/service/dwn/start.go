@@ -11,7 +11,7 @@ func Start() {
 	config := configuration.Create()
 
 	// Create HTTP Service
-	httpService := CreateHTTPService(config.GetListenAddress(), config.GetListenPort())
+	httpService := CreateHTTPService(config.GetListenAddress(), config.GetListenPort(), config.GetJWTKey())
 
 	// Wait and Serve
 	log.Fatal("Stopped Listening and Serving:  %v", httpService.ListenAndServe())
